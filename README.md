@@ -1,27 +1,28 @@
-# slidev-addon-stackblitz
+# slidev-addon-ws-syncho
 
-Stackblitz component for [sli.dev](https://sli.dev/)
+Web socket synchro component for [sli.dev](https://sli.dev/) To support slide synchronisation when deploying your slides on github page. 
 
-![example](https://raw.githubusercontent.com/barais/slidev-addon-stackblitz/main/example-export/001.png)
+
+You have to deploy the following [web socket server](https://github.com/barais/slidev-slide-synchro-server)
 
 ```md
 ---
 layout: default
 addons:
-    - slidev-addon-stackblitz
+    - slidev-addon-ws-syncho
+wsSettings:
+  server: ws://localhost:8080
+  updateCursor: true # To send cursor update notification
 ---
 
-<div class="grid w-full">
-
-<Stackblitz id="angular-druxxd" file="src%2Fmain.ts" width="100%" height="450"/>
-
-</div>
 ```
+
+
 
 ## Installation
 
 ```bash
-npm i slidev-addon-stackblitz
+npm i slidev-addon-ws-syncho
 ```
 
 ### Usage
@@ -29,26 +30,25 @@ npm i slidev-addon-stackblitz
 -   Define this addon in `frontmatter`
 
 ```yaml
+layout: default
 addons:
-    - slidev-addon-stackblitz
+    - slidev-addon-ws-syncho
+wsSettings:
+  server: ws://localhost:8080
+#  updateCursor: true # To send cursor update notification
 ```
 
--   or in `package.json`
 
-```json
- "slidev": {
-    "addons": [
-      "slidev-addon-stackblitz"
-    ]
-  },
-```
 
 ## Components
 
-### QRCode
+Put your component in one of the global layer component of your presentation. 
 
 ```vue
-<Stackblitz id="angular-druxxd" file="src%2Fmain.ts" width="100%" height="450"/>
-```
+<!-- global-bottom.vue -->
+<template>
+    <WsSynchro/>
+</template>
 
+```
 
