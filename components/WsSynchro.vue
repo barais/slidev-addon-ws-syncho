@@ -16,7 +16,7 @@ const { clicksContext,
 import { useRouter } from 'vue-router'
 
 import { initSharedState, onPatch as onPatchSlide, patch as patchSlide, SharedState, sharedState as sharedStateSlide } from '@slidev/client/state/shared.ts'
-import { onPatch as onPatchDraw, patch as patchDraw, DrawingsState } from '@slidev/client/state/drawings.ts'
+import { onPatchDrawingState as onPatchDraw, patchDrawingState as patchDraw, DrawingsState } from '@slidev/client/state/drawings.ts'
 import Hashids from 'hashids';
 import type { SlideRoute } from '@slidev/types'
 import { skipTransition } from '@slidev/client/logic/hmr.ts'

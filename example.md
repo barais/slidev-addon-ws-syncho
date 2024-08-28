@@ -21,7 +21,7 @@ transition: slide-left
 mdc: true
 wsSettings:
   server: ws://localhost:8080
-  updateCursor: true
+  updateCursor: false
 ---
  
 <div class="grid w-full">
