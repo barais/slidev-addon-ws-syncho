@@ -157,8 +157,7 @@ function shouldUpdateCursor() {
   if ((configs as any).wsSettings?.updateCursor !== undefined) {
     return (configs as any).wsSettings.updateCursor;
   }
-
-  return true;
+  return false;
 }
 
 
