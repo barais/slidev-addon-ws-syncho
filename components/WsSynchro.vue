@@ -9,14 +9,14 @@ import { configs } from "@slidev/client";
 import { slides } from "#slidev/slides";
 
 import { useNav, slideHeight } from '@slidev/client'
-const {     clicksContext,
-    currentSlideNo,
-    hasPrimarySlide,
-    isNotesViewer, isPresenter } = useNav()
+const { clicksContext,
+  currentSlideNo,
+  hasPrimarySlide,
+  isNotesViewer, isPresenter } = useNav()
 import { useRouter } from 'vue-router'
 
-import {initSharedState, onPatch as onPatchSlide, patch as patchSlide, SharedState, sharedState as sharedStateSlide } from '@slidev/client/state/shared.ts'
-import {  onPatch as onPatchDraw, patch as patchDraw, DrawingsState } from '@slidev/client/state/drawings.ts'
+import { initSharedState, onPatch as onPatchSlide, patch as patchSlide, SharedState, sharedState as sharedStateSlide } from '@slidev/client/state/shared.ts'
+import { onPatch as onPatchDraw, patch as patchDraw, DrawingsState } from '@slidev/client/state/drawings.ts'
 import Hashids from 'hashids';
 import type { SlideRoute } from '@slidev/types'
 import { skipTransition } from '@slidev/client/logic/hmr.ts'
@@ -44,7 +44,7 @@ const router = useRouter()
 function getSlide(no: number | string) {
   return slides.value.find(
     s => (s.no === +no || (s.meta.slide as any).frontmatter.routeAlias === no)
-    )
+  )
 }
 function getSlidePath(
   route: SlideRoute | number | string,
@@ -57,24 +57,22 @@ function getSlidePath(
 }
 
 function updateSharedState() {
-    // console.error('test', currentSlideNo.value)
 
-    // we allow Presenter mode, or Viewer mode from trusted origins to update the shared state
-    if (!isPresenter.value)
-      return
-    else {
-      webSocket.send(JSON.stringify({
-          id: slideId.value,
-          state: sharedStateSlide,
-          type: "broadcast",
-          mtype: SendType.SLIDE
-        }))    
-      }
-    }
-  router.afterEach(updateSharedState)
-  
-  onPatchSlide((state: SharedState) => {
-  
+  if (!isPresenter.value)
+    return
+  else {
+    webSocket.send(JSON.stringify({
+      id: slideId.value,
+      state: sharedStateSlide,
+      type: "broadcast",
+      mtype: SendType.SLIDE
+    }))
+  }
+}
+router.afterEach(updateSharedState)
+
+onPatchSlide((state: SharedState) => {
+
   if (isPresenter.value && connectState.value === ConnectionStatus.CONNECTED) {
     if (shouldUpdateCursor()) {
       webSocket.send(JSON.stringify({
@@ -95,7 +93,6 @@ function updateSharedState() {
         )
         lastPage.value = state.page
         lastClick.value = state.clicks
-
       }
 
     }
@@ -178,7 +175,7 @@ function onMessage(event) {
           ...router.currentRoute.value.query,
           clicks: state.clicks || 0,
         },
-      })      
+      })
       patchSlide('page', state.page);
     }
     if (sharedStateSlide.clicks !== state.clicks) {
@@ -190,9 +187,9 @@ function onMessage(event) {
           clicks: state.clicks || 0,
         },
       })
-       patchSlide('clicks', state.clicks);
+      patchSlide('clicks', state.clicks);
     }
-    if (state.cursor ) {
+    if (state.cursor) {
       patchSlide('cursor', state.cursor);
     }
 
