@@ -8,19 +8,27 @@ import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { configs } from "@slidev/client";
 import { slides } from "#slidev/slides";
 
-import { useNav, slideHeight } from '@slidev/client'
+import { useNav, slideHeight, useDrawings } from '@slidev/client'
 const { clicksContext,
   currentSlideNo,
   hasPrimarySlide,
   isNotesViewer, isPresenter } = useNav()
+
+
+  const { drauu} = useDrawings()
+
 import { useRouter } from 'vue-router'
 
 import { initSharedState, onPatch as onPatchSlide, patch as patchSlide, SharedState, sharedState as sharedStateSlide } from '@slidev/client/state/shared.ts'
-import { onPatchDrawingState as onPatchDraw, patchDrawingState as patchDraw, DrawingsState } from '@slidev/client/state/drawings.ts'
+import {patchDrawingState as patchDraw, DrawingsState,drawingState } from '@slidev/client/state/drawings.ts'
 import Hashids from 'hashids';
 import type { SlideRoute } from '@slidev/types'
 import { skipTransition } from '@slidev/client/logic/hmr.ts'
 
+interface DrawingData {
+  dump:string;
+  slideNo: number;
+}
 
 enum ConnectionStatus {
   CONNECTED,
@@ -56,6 +64,25 @@ function getSlidePath(
   return presenter ? `/presenter/${no}` : `/${no}`
 }
 
+drauu.on('changed', ()=> {
+  if (!isPresenter.value)
+    return
+    const dump = drauu.dump()
+      const key = currentSlideNo.value
+        webSocket.send(JSON.stringify({
+          id: slideId.value,
+          state: {
+            slideNo: currentSlideNo.value,
+            dump: dump
+          },
+          type: "broadcast",
+           mtype: SendType.DRAW
+    }))
+        // patchDraw(key, drauu.dump())
+    
+
+})
+
 function updateSharedState() {
 
   if (!isPresenter.value)
@@ -72,7 +99,6 @@ function updateSharedState() {
 router.afterEach(updateSharedState)
 
 onPatchSlide((state: SharedState) => {
-
   if (isPresenter.value && connectState.value === ConnectionStatus.CONNECTED) {
     if (shouldUpdateCursor()) {
       webSocket.send(JSON.stringify({
@@ -99,19 +125,7 @@ onPatchSlide((state: SharedState) => {
   }
 })
 
-onPatchDraw((state: DrawingsState) => {
-  console.error('on patch draw', state)
-  if (isPresenter.value && connectState.value == ConnectionStatus.CONNECTED) {
-    /* webSocket.send(JSON.stringify({
-      id: slideId.value,
-      state: state,
-      type: "broadcast",
-      mtype: SendType.DRAW
-    }) 
-    )*/
-    // To complete
-  }
-})
+
 
 
 
@@ -135,7 +149,7 @@ interface SlideState {
 interface DrawState {
   mtype: SendType.DRAW
   type: 'broadcast'
-  state: DrawingsState
+  state: DrawingData
 }
 
 
@@ -194,6 +208,19 @@ function onMessage(event) {
 
 
     // Object.entries(data).forEach(([key, value]) => (pollState[key] = value));
+  } else if (mtype === SendType.DRAW){
+
+    const dump = state.dump
+    const key = state.slideNo
+    const key1 = currentSlideNo.value
+
+    if ((drawingState[key]) !== dump && key1 === key ){
+      patchDraw(key1, dump)
+      drauu.load(dump)
+    } else if (dump ==='' && key1 === key  ){
+        drauu.clear();
+      }
+
   }
 }
 
@@ -223,7 +250,9 @@ function onOpen() {
   connectState.value = ConnectionStatus.CONNECTED;
   webSocket.send(JSON.stringify({
     id: slideId.value,
-    type: "connect"
+    type: "connect",
+    mtype: "slide",
+
   })
   )
 
