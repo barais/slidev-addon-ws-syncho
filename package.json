@@ -1,6 +1,6 @@
 {
     "name": "slidev-addon-ws-syncho",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "type": "module",
     "author": "barais",
     "description": "ws component for slidev for synchronising slides using wssocket server",
