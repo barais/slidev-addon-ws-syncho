@@ -15,14 +15,14 @@ class: text-center
 # https://sli.dev/features/drawing
 drawings:
   persist: false
-  syncAll: true
 # slide transition: https://sli.dev/guide/animations.html#slide-transitions
 transition: slide-left
 # enable MDC Syntax: https://sli.dev/features/mdc
 mdc: true
 wsSettings:
   server: ws://localhost:8080
-  updateCursor: false
+  updateCursor: true
+  synchroDrawing: true
 ---
  
 <div class="grid w-full">
